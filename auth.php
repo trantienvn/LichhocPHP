@@ -66,38 +66,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $client = new Client(['cookies' => true]);
     $fullname = login($client, $username, $passwordmd5);
 
-    // Kiểm tra sự tồn tại của username và lấy mật khẩu hiện tại
-    $sql = "SELECT passwordmd5 FROM student WHERE username = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
+    // // Kiểm tra sự tồn tại của username và lấy mật khẩu hiện tại
+    // $sql = "SELECT passwordmd5 FROM student WHERE username = ?";
+    // $stmt = $conn->prepare($sql);
+    // $stmt->bind_param("s", $username);
+    // $stmt->execute();
+    // $result = $stmt->get_result();
+    // $row = $result->fetch_assoc();
 
-    // Chuẩn bị câu truy vấn chèn hoặc cập nhật
-    if ($row) {
-        // Người dùng đã tồn tại, kiểm tra mật khẩu
-        if ($row['passwordmd5'] !== $passwordmd5) {
-            // Nếu mật khẩu khác, tiến hành cập nhật
-            $sql2 = "UPDATE student SET passwordmd5 = ? WHERE username = ?";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->bind_param("ss", $passwordmd5, $username);
-            if ($stmt2->execute()) {
-            }
-        }
-    } else {
-        // Người dùng chưa tồn tại, chèn bản ghi mới
-        $sql2 = "INSERT INTO student (username, passwordmd5) VALUES (?, ?)";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("ss", $username, $passwordmd5);
-        $stmt2->execute();
-    }
+    // // Chuẩn bị câu truy vấn chèn hoặc cập nhật
+    // if ($row) {
+    //     // Người dùng đã tồn tại, kiểm tra mật khẩu
+    //     if ($row['passwordmd5'] !== $passwordmd5) {
+    //         // Nếu mật khẩu khác, tiến hành cập nhật
+    //         $sql2 = "UPDATE student SET passwordmd5 = ? WHERE username = ?";
+    //         $stmt2 = $conn->prepare($sql2);
+    //         $stmt2->bind_param("ss", $passwordmd5, $username);
+    //         if ($stmt2->execute()) {
+    //         }
+    //     }
+    // } else {
+    //     // Người dùng chưa tồn tại, chèn bản ghi mới
+    //     $sql2 = "INSERT INTO student (username, passwordmd5) VALUES (?, ?)";
+    //     $stmt2 = $conn->prepare($sql2);
+    //     $stmt2->bind_param("ss", $username, $passwordmd5);
+    //     $stmt2->execute();
+    // }
 
-    // Giải phóng tài nguyên
-    $stmt->close();
-    if (isset($stmt2))
-        $stmt2->close();
-    $conn->close();
+    // // Giải phóng tài nguyên
+    // $stmt->close();
+    // if (isset($stmt2))
+    //     $stmt2->close();
+    // $conn->close();
 
     // Tạo cookie
     setcookie("username", $username, time() + (86400 * 30), "/", "", true, true);

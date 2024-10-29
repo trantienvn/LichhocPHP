@@ -14,30 +14,35 @@ $username = $_COOKIE['username']; // Assuming the username is stored in the sess
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Học</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Thêm jQuery -->
 </head>
 
 <body>
     <div type="button" class="refetch-btn" onClick="refetch()">
-        <svg fill="#4CAF50" width="40px" height="40px" viewBox="0 0 24 24" id="update" data-name="Flat Line"
+        <svg fill="#fff" width="40px" height="40px" viewBox="0 0 24 24" id="update" data-name="Flat Line"
             xmlns="http://www.w3.org/2000/svg" class="icon flat-line">
             <path id="primary" d="M4,12A8,8,0,0,1,18.93,8"
-                style="fill: none; stroke: #4CAF50; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                style="fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
             </path>
             <path id="primary-2" data-name="primary" d="M20,12A8,8,0,0,1,5.07,16"
-                style="fill: none; stroke: #4CAF50; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                style="fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
             </path>
             <polyline id="primary-3" data-name="primary" points="14 8 19 8 19 3"
-                style="fill: none; stroke: #4CAF50; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                style="fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
             </polyline>
             <polyline id="primary-4" data-name="primary" points="10 16 5 16 5 21"
-                style="fill: none; stroke: #4CAF50; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                style="fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
             </polyline>
         </svg>
     </div>
     <div type="button" class="logout-btn" onClick="logout()">
-        <svg fill="#4CAF50" width="40px" height="40px" viewBox="0 0 32 32" version="1.1"
+        <svg fill="#fff" width="40px" height="40px" viewBox="0 0 32 32" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
             <title>logout</title>
             <path
@@ -119,7 +124,7 @@ $username = $_COOKIE['username']; // Assuming the username is stored in the sess
         function renderSchedule(scheduleData) {
             const scheduleDiv = document.getElementById('schedule');
             if (scheduleData.length === 0) {
-                scheduleDiv.innerHTML = "<div class='class empty'>Không có lịch học</div>";
+                scheduleDiv.innerHTML = "<div class='day'>Không có lịch học</div>";
                 return;
             }
 
@@ -175,8 +180,8 @@ $username = $_COOKIE['username']; // Assuming the username is stored in the sess
             } while (time <= lastDate);
 
             const endMessage = document.createElement('div');
-            endMessage.className = 'class empty';
-            endMessage.innerHTML = "Bạn đã hết lịch học";
+            endMessage.className = 'day';
+            endMessage.innerHTML = "<div class='class empty'>Bạn đã hoàn thành kì học.</div>";
             scheduleDiv.appendChild(endMessage);
         }
 
