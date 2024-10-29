@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_COOKIE['username'])) {
-    header("Location: login.php"); // Chuyển hướng nếu chưa đăng nhập
+    header("Location: login"); // Chuyển hướng nếu chưa đăng nhập
     exit();
 }
 $username = $_COOKIE['username']; // Assuming the username is stored in the session
@@ -81,6 +81,7 @@ $username = $_COOKIE['username']; // Assuming the username is stored in the sess
                         // renderSchedule(response.data); // Hiển thị dữ liệu lịch học
                         window.location.reload();
                     } else {
+                        alert(response.message);
                         document.getElementById('schedule').innerHTML = "<div class='class empty'>Không có lịch học</div>";
                     }
                 },

@@ -81,7 +81,7 @@ if (isset($_COOKIE['hash'])) {
                         }
                     },
                     error: function () {
-                        $('#errorMessage').text('Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau.');
+                        $('#errorMessage').text('Có lỗi xảy ra, có thể máy chủ nhà trường đang lỗi. Vui lòng thử lại sau');
                     }
                 });
             });

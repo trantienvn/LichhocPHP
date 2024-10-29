@@ -1,13 +1,23 @@
 <?php
 session_start();
 require 'vendor/autoload.php'; // Nạp autoload nếu cần thiết
-require_once 'config.php';
+// require_once 'config.php';
 use GuzzleHttp\Client;
 header('Content-Type: application/json; charset=utf-8');
 function login($client, $username, $passwordmd5)
 {
     $loginUrl = "http://dangkytinchi.ictu.edu.vn/kcntt/login.aspx";
-    $response = $client->get($loginUrl, ['allow_redirects' => false]);
+    $response = null;
+    try {
+        $response = $client->get($loginUrl, ['allow_redirects' => false]);
+        if ($response->getStatusCode() !== 200) {
+            echo json_encode(['error' => true, 'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.']);
+            exit;
+        }
+    } catch (\Exception $e) {
+        echo json_encode(['error' => true, 'message' => 'Máy chủ đăng kí tín chỉ đang lỗi.']);
+        exit;
+    }
     $html = (string) $response->getBody();
     $header = $response->getHeaders();
     $session = "";
@@ -24,6 +34,7 @@ function login($client, $username, $passwordmd5)
     }
     $loginUrl = "https://dangkytinchi.ictu.edu.vn/kcntt/(S(${session}))/login.aspx";
     $response = $client->get($loginUrl, ['allow_redirects' => false]);
+    
     $html = (string) $response->getBody();
     $dom = new DOMDocument;
     @$dom->loadHTML($html);

@@ -98,7 +98,18 @@ function to_date_string($date)
 function login($client, $username, $passwordmd5)
 {
     $loginUrl = "http://dangkytinchi.ictu.edu.vn/kcntt/login.aspx";
-    $response = $client->get($loginUrl, ['allow_redirects' => false]);
+    // $response = $client->get($loginUrl, ['allow_redirects' => false]);
+    $response = null;
+    try {
+        $response = $client->get($loginUrl, ['allow_redirects' => false]);
+        if ($response->getStatusCode() !== 200) {
+            echo json_encode(['error' => true, 'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.']);
+            exit;
+        }
+    } catch (\Exception $e) {
+        echo json_encode(['error' => true, 'message' => 'Máy chủ đăng kí tín chỉ đang lỗi.']);
+        exit;
+    }
     $html = (string) $response->getBody();
     $header = $response->getHeaders();
     $session = "";
