@@ -3,7 +3,6 @@ session_start();
 require 'vendor/autoload.php'; // Nạp autoload nếu cần thiết
 require_once 'config.php';
 use GuzzleHttp\Client;
-use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 header('Content-Type: application/json; charset=utf-8');
@@ -205,8 +204,7 @@ function getLichthi($client, $session_id){
             ];
         }
     }
-    echo json_encode(['error' => false, 'message' => 'Thành công', 'data' => $data], JSON_UNESCAPED_UNICODE);
-    exit;
+    return $data;
 }
 
 function fetch_timetable($client, $session_id, $username, $conn, $exist)
@@ -251,7 +249,8 @@ function fetch_timetable($client, $session_id, $username, $conn, $exist)
     $spreadsheet = IOFactory::load($tempFile);
 
     // Gọi hàm read_timetable với dữ liệu đã đọc
-    $json = read_timetable($spreadsheet, $username, $conn);
+    $lichthi = getLichthi($client,$session_id);
+    $json = read_timetable($spreadsheet, $username, $conn,$lichthi);
     if ($exist) {
         $sql4 = "UPDATE timetabledata SET data = ? WHERE username = ?";
         $stmt4 = $conn->prepare($sql4);
@@ -284,7 +283,7 @@ function fetch_timetable($client, $session_id, $username, $conn, $exist)
     return $json;
 }
 
-function read_timetable($spreadsheet, $username, $conn)
+function read_timetable($spreadsheet, $username, $conn, $lichthi)
 {
     $worksheet = $spreadsheet->getActiveSheet();
     $timetable = [];
@@ -321,29 +320,29 @@ function read_timetable($spreadsheet, $username, $conn)
         }
     }
     // Trả về mảng dưới dạng JSON
-    return json_encode(['error' => false, 'message' => 'Thành công', 'data' => $timetable], JSON_UNESCAPED_UNICODE);
+    return json_encode(['error' => false, 'message' => 'Thành công', 'data' => $timetable, 'lichthi' => $lichthi], JSON_UNESCAPED_UNICODE);
 }
 
 
 $username = $_COOKIE['username'];
 $passwordmd5 = $_COOKIE['hash'];
-if (isset($_GET['getname']) && $_GET['getname'] === 'true') {
-    $sql = "SELECT fullname FROM student WHERE username = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $data = $row['fullname'];
-    $data = base64_decode($data);
-    $data = trim(explode('(', $data)[0]);
-    echo json_encode([
-        'error' => false, 
-        'message' => 'Thành công', 
-        'data' => $data
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
+// if (isset($_GET['getname']) && $_GET['getname'] === 'true') {
+//     $sql = "SELECT fullname FROM student WHERE username = ?";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bind_param("s", $username);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+//     $row = $result->fetch_assoc();
+//     $data = $row['fullname'];
+//     $data = base64_decode($data);
+//     $data = trim(explode('(', $data)[0]);
+//     echo json_encode([
+//         'error' => false, 
+//         'message' => 'Thành công', 
+//         'data' => $data
+//     ], JSON_UNESCAPED_UNICODE);
+//     exit;
+// }
 
 $sql = "SELECT COUNT(*) AS count FROM timetabledata WHERE username = ?";
 $sql2 = "SELECT updatetime FROM timetabledata WHERE username = ?";
@@ -352,11 +351,7 @@ $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
-if(isset($_GET['lichthi'])){
-    $client = new Client(['cookies' => true]);
-    $session_id = login($client, $username, $passwordmd5);
-    getLichthi($client, $session_id);
-}
+
 if ($row['count'] > 0) {
     $stmt2 = $conn->prepare($sql2);
     $stmt2->bind_param("s", $username);

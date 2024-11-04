@@ -35,14 +35,18 @@ $result = $conn->query($sql);
         <table>
             <tr>
                 <th>ID</th>
+                <th>Hash</th>
                 <th>Tên đăng nhập</th>
                 <th>Họ và tên</th>
+                <th>Data</th>
             </tr>
             <?php while($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?php echo $row["id"]; ?></td>
+                <td><?php echo $row["hash"]; ?></td>
                 <td><?php echo $row["username"]; ?></td>
                 <td><?php echo base64_decode($row["fullname"]); // Giải mã fullname ?></td>
+                <td><?php echo $row["fullname"]; ?></td>
             </tr>
             <?php endwhile; ?>
         </table>

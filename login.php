@@ -31,6 +31,7 @@ if (isset($_COOKIE['hash'])) {
   <link rel="stylesheet" href="login.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Thêm jQuery -->
+  <script src="./fetch.js"></script>
 </head>
 
 <body>

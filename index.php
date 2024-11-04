@@ -14,18 +14,9 @@ $username = $_COOKIE['username']; // Assuming the username is stored in the sess
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Học</title>
-    <meta
-        name="description"
-        content="Hệ thống xem lịch học ICTU"
-    />
-    <meta
-        name="keywords"
-        content="Hệ thống xem lịch học ICTU"
-    />
-    <meta
-        property="og:description"
-        content="Hệ thống xem lịch học ICTU"
-    />
+    <meta name="description" content="Hệ thống xem lịch học ICTU" />
+    <meta name="keywords" content="Hệ thống xem lịch học ICTU" />
+    <meta property="og:description" content="Hệ thống xem lịch học ICTU" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -34,98 +25,100 @@ $username = $_COOKIE['username']; // Assuming the username is stored in the sess
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Thêm jQuery -->
 </head>
 <style>
-:root {
-    --main-color: #3182f4;
-}
+    :root {
+        --main-color: #3182f4;
+    }
 
-body {
-    font-family: Mulish, sans-serif;
-    margin: 20px;
-    background-color: var(--main-color);
-    color: #333;
-}
+    body {
+        font-family: Mulish, sans-serif;
+        margin: 20px;
+        background-color: var(--main-color);
+        color: #333;
+    }
 
-h1 {
-    text-align: center;
-    color: #fff;
-    margin-bottom: 20px;
-}
+    h1 {
+        text-align: center;
+        color: #fff;
+        margin-bottom: 20px;
+    }
 
 
 
-.empty {
-    font-weight: bold;
-    color: #ff5722;
-}
+    .empty {
+        font-weight: bold;
+        color: #ff5722;
+    }
 
-.logout-btn, .refetch-btn {
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .logout-btn,
+    .refetch-btn {
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-.logout-btn {
-    float: left;
-    rotate: 180deg;
-}
+    .logout-btn {
+        float: left;
+        rotate: 180deg;
+    }
 
-.refetch-btn {
-    float: right;
-}
+    .refetch-btn {
+        float: right;
+    }
 
-h2 {
-    color: #000;
-    font-weight: bold;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    margin-left: 10px;
-}
+    h2 {
+        color: #000;
+        font-weight: bold;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        margin-left: 10px;
+    }
 
-h6 {
-    color: #2196F3;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
+    h6 {
+        color: #2196F3;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
 
-.day {
-    margin-bottom: 30px;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .day {
+        margin-bottom: 30px;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.class {
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #e3f2fd;
-    border-left: 5px solid #2196F3;
-}
+    .class {
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #e3f2fd;
+        border-left: 5px solid #2196F3;
+    }
 
-ul {
-    list-style-type: none;
-    padding-left: 0;
-}
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
 
-li {
-    margin-bottom: 5px;
-}
+    li {
+        margin-bottom: 5px;
+    }
 
-.empty {
-    margin-top: 15px;
-    font-weight: bold;
-    color: #ff5722;
-}
+    .empty {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #ff5722;
+    }
 
-a {
-    text-decoration: none;
-}
+    a {
+        text-decoration: none;
+    }
 </style>
+
 <body>
     <div type="button" class="logout-btn" onClick="logout()">
         <svg fill="#fff" width="40px" height="40px" viewBox="0 0 32 32" version="1.1"
@@ -154,11 +147,27 @@ a {
             </polyline>
         </svg>
     </div>
-    
+
 
     <h1 id="title">Lịch Học</h1>
-    <div id="schedule"></div>
-    <script src="./fetchz.js"></script>
+    <div id="schedule">
+        <div class="class empty" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+            Đang cập nhật lịch học
+            <svg width="100" height="100">
+                <circle cx="50" cy="50" r="30" stroke="#e1e7e7" stroke-width="10" fill="none"></circle>
+                <circle cx="50" cy="50" r="30" stroke="#07abcc" stroke-width="8" stroke-linecap="round" fill="none">
+                    <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite"
+                        dur="1.6666666666666667s" values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1">
+                    </animateTransform>
+                    <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1.6666666666666667s"
+                        values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882"
+                        keyTimes="0;0.5;1"></animate>
+                </circle>
+            </svg>
+        </div>
+
+    </div>
+    <script src="./fetch.js"></script>
     <script>
         function logout() {
             var xhr = new XMLHttpRequest();
@@ -172,15 +181,17 @@ a {
         }
         async function refetch() {
             document.getElementById('schedule').innerHTML = `
-                <div class='class empty'>Đang cập nhật lịch học
+                <div class="class empty" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    Đang cập nhật lịch học
                 <svg width="100" height="100">
                     <circle cx="50" cy="50" r="30" stroke="#e1e7e7" stroke-width="10" fill="none"></circle>
                     <circle cx="50" cy="50" r="30" stroke="#07abcc" stroke-width="8" stroke-linecap="round" fill="none">
-                    <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1.6666666666666667s" values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>
-                    <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1.6666666666666667s" values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882" keyTimes="0;0.5;1"></animate>
+                        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1.6666666666666667s" values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>
+                        <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1.6666666666666667s" values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882" keyTimes="0;0.5;1"></animate>
                     </circle>
                 </svg>
                 </div>
+
                 `;
 
             $.ajax({
@@ -190,6 +201,10 @@ a {
                 dataType: 'json',
                 success: function (response) {
                     if (response.data) {
+
+                        if (response.lichthi) {
+                            lichthi = response.lichthi;
+                        }
                         renderSchedule(response.data); // Hiển thị dữ liệu lịch học
                         // window.location.reload();
                     } else {
@@ -203,7 +218,7 @@ a {
             });
         }
         function getname() {
-            
+
             // $.ajax({
             //     url: `getdata`,
             //     type: 'GET',
@@ -218,30 +233,13 @@ a {
             //     }
             // });
         }
-        async function getlichthi() {
-            
-            $.ajax({
-                url: `getdata`,
-                type: 'GET',
-                data: { lichthi: true },
-                dataType: 'json',
-                success: function (response) {
-                    if (response.data) {
-                        lichthi = response.data;
-                    }
-                },
-                error: function (xhr, status, error) {
-                    alert("Hiện tại chưa cập nhật được lịch thi, vui lòng thử lại sau.");
-                }
-            });
-        }
+
     </script>
 
     <script>
         const username = "<?php echo $username; ?>";
         const daysOfWeek = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
         let lichthi = [];
-        getlichthi();
         // Function to fetch the schedule data from JSON file
         async function fetchSchedule() {
             $.ajax({
@@ -249,6 +247,9 @@ a {
                 type: 'GET', // Sử dụng phương thức GET
                 dataType: 'json',
                 success: function (response) {
+                    if (response.lichthi) {
+                        lichthi = response.lichthi;
+                    }
                     if (response.error === false) {
                         renderSchedule(response.data); // Hiển thị dữ liệu lịch học
                     } else {
@@ -295,9 +296,9 @@ a {
             //     return dateA - dateB; // So sánh ngày
             // });
             let endDay = "01/01/2050";
-            if(lichthi.length>0){
+            if (lichthi.length > 0) {
                 endDay = lichthi[lichthi.length - 1].ngayThi;
-            }else{
+            } else {
                 endDay = scheduleData[scheduleData.length - 1].MocTG;
             }
             const lastDate = stringToDate(endDay);
@@ -310,7 +311,7 @@ a {
                 }
                 list[data.MocTG].push(data);
             });
-            lichthi.forEach(data=>{
+            lichthi.forEach(data => {
                 if (!list[data.ngayThi]) {
                     list[data.ngayThi] = [];
                 }
@@ -326,7 +327,7 @@ a {
 
                 if (list[date]) {
                     list[date].forEach(classItem => {
-                        if(!classItem.hinhThucThi){
+                        if (!classItem.hinhThucThi) {
                             let linkmeet = classItem.Meet;
                             if (linkmeet.length === 0) {
                                 linkmeet = "Không có link meet";
@@ -344,7 +345,7 @@ a {
                                 <li>Link Meet: <a href="${linkmeet}" target="_blank">${linkmeet}</a></li>
                             </ul>`;
                             dayDiv.appendChild(classDiv);
-                        }else{
+                        } else {
                             const classDiv = document.createElement('div');
                             classDiv.className = 'class';
                             classDiv.innerHTML = `
