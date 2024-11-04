@@ -11,6 +11,18 @@ if (isset($_COOKIE['hash'])) {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Đăng nhập</title>
+   <meta
+        name="description"
+        content="Hệ thống xem lịch học ICTU"
+    />
+    <meta
+        name="keywords"
+        content="Hệ thống xem lịch học ICTU"
+    />
+    <meta
+        property="og:description"
+        content="Hệ thống xem lịch học ICTU"
+    />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link

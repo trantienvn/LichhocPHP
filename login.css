@@ -69,7 +69,7 @@ form button {
   border: none;
   outline: none;
   background-color: var(--main-color);
-  color: #2e0d30;
+  color: white;
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.15em;

@@ -8,7 +8,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(E_ALL & ~E_WARNING);
-
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 function tinhtoan($tiethoc)
 {
@@ -102,10 +104,6 @@ function login($client, $username, $passwordmd5)
     $response = null;
     try {
         $response = $client->get($loginUrl, ['allow_redirects' => false]);
-        if ($response->getStatusCode() !== 200) {
-            echo json_encode(['error' => true, 'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.']);
-            exit;
-        }
     } catch (\Exception $e) {
         echo json_encode(['error' => true, 'message' => 'Máy chủ đăng kí tín chỉ đang lỗi.']);
         exit;
@@ -160,12 +158,62 @@ function login($client, $username, $passwordmd5)
     }
     return $session;
 }
+function getLichthi($client, $session_id){
+    $examurl = "http://dangkytinchi.ictu.edu.vn/kcntt/(S($session_id))/StudentViewExamList.aspx";
+    $response = $client->get($examurl, ['allow_redirects' => false]);
+    $dom = new DOMDocument;
+    @$dom->loadHTML(mb_convert_encoding($response->getBody(), 'HTML-ENTITIES', 'UTF-8'));
+    $xpath = new DOMXPath($dom);
+    $table = $xpath->query("//table[@id='tblCourseList']")[0];
+    $rows = $xpath->query(".//tr", $table); // Lấy tất cả các hàng của bảng
+    $data = [];
+    for ($i = 1; $i < $rows->length; $i++) {
+        $cols = $xpath->query(".//td", $rows[$i]); // Lấy tất cả các cột trong hàng
+        $rowData = [];
+
+        foreach ($cols as $col) {
+            $rowData[] = trim($col->textContent); // Thêm giá trị cột vào hàng, loại bỏ khoảng trắng thừa
+        }
+
+        // Gán các giá trị từ $rowData vào các biến
+        [
+            $stt,
+            $maHP,
+            $tenHP,
+            $soTC,
+            $ngayThi,
+            $caThi,
+            $hinhThucThi,
+            $soBaoDanh,
+            $phongThi,
+            $ghiChu
+        ] = $rowData + array_fill(0, 10, null); // Đảm bảo có 10 giá trị mặc định là null nếu thiếu
+
+        // Kiểm tra nếu stt không rỗng
+        if ($stt !== "") {
+            $data[] = [
+                "stt" => $stt,
+                "maHP" => $maHP,
+                "tenHP" => $tenHP,
+                "soTC" => $soTC,
+                "ngayThi" => $ngayThi,
+                "caThi" => $caThi,
+                "hinhThucThi" => $hinhThucThi,
+                "soBaoDanh" => $soBaoDanh,
+                "phongThi" => $phongThi,
+                "ghiChu" => $ghiChu
+            ];
+        }
+    }
+    echo json_encode(['error' => false, 'message' => 'Thành công', 'data' => $data], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 function fetch_timetable($client, $session_id, $username, $conn, $exist)
 {
     $TimeTableURL = "http://dangkytinchi.ictu.edu.vn/kcntt/(S($session_id))/Reports/Form/StudentTimeTable.aspx";
     $response = $client->get($TimeTableURL);
-    $html = (string) $response->getBody();
+    $html = mb_convert_encoding($response->getBody(), 'HTML-ENTITIES', 'UTF-8');
     $dom = new DOMDocument;
     @$dom->loadHTML($html);
     $xpath = new DOMXPath($dom);
@@ -177,6 +225,7 @@ function fetch_timetable($client, $session_id, $username, $conn, $exist)
         if ($name)
             $payload[$name] = $value;
     }
+    $fullname = $xpath->query("//span[@id='PageHeader1_lblUserFullName']")[0]->nodeValue;
     $payload['drpSemester'] = $xpath->query(".//select[@id='drpSemester']/option[@selected='selected']")->item(0)->getAttribute('value');
     $payload['drpTerm'] = $xpath->query(".//select[@id='drpTerm']/option[@selected='selected']")->item(0)->getAttribute('value');
     $payload['drpType'] = $xpath->query(".//select[@id='drpType']/option[@selected='selected']")->item(0)->getAttribute('value');
@@ -213,8 +262,11 @@ function fetch_timetable($client, $session_id, $username, $conn, $exist)
         $stmt4 = $conn->prepare($sql4);
         $stmt4->bind_param("ss", $username, $json);
         $stmt4->execute();
-
     }
+    $updatenamesql = "UPDATE student SET fullname = ? WHERE username = ?";
+    $updatename = $conn->prepare($updatenamesql);
+    $updatename->bind_param("ss", base64_encode($fullname), $username);
+    $updatename->execute();
     $updatetime_sql = "UPDATE timetabledata SET updatetime = NOW() WHERE username = ?";
     $stmt_updatetime = $conn->prepare($updatetime_sql);
     $stmt_updatetime->bind_param("s", $username);
@@ -246,15 +298,16 @@ function read_timetable($spreadsheet, $username, $conn)
         try {
             // Kiểm tra tồn tại của các chỉ số
 
-            if (isset($data[1]) && preg_match('/\((.*?)\)/', $data[1], $matches)) {
+            if (isset($data[1])) {
                 if (strpos($data[1], "đến")) {
+                    preg_match('/\((.*?)\)/', $data[1], $matches);
                     $weekRange = $matches[1];
                     $tuan = lichtuan($weekRange);
-                } else
+                } else if(intval($data[0])!=0)
                     $timetable[] = [
                         'STT' => intval($data[0]),
-                        'TenHP' => isset($data[1]) ? trim(explode('(', $data[1])[0]) : '',
-                        'MaHP' => isset($data[1]) ? explode(')', explode('(', $data[1])[1])[0] : '',
+                        'TenHP' => $data[1],
+                        // 'MaHP' => isset($data[1]) ? explode(')', explode('(', $data[1])[1])[0] : '',
                         'GiangVien' => trim(explode("\n", $data[2])[0] ?? ''),
                         'Meet' => trim(explode("\n", $data[2])[1] ?? ''),
                         'ThuNgay' => $data[3] ?? '',
@@ -272,9 +325,26 @@ function read_timetable($spreadsheet, $username, $conn)
 }
 
 
-
 $username = $_COOKIE['username'];
 $passwordmd5 = $_COOKIE['hash'];
+if (isset($_GET['getname']) && $_GET['getname'] === 'true') {
+    $sql = "SELECT fullname FROM student WHERE username = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $data = $row['fullname'];
+    $data = base64_decode($data);
+    $data = trim(explode('(', $data)[0]);
+    echo json_encode([
+        'error' => false, 
+        'message' => 'Thành công', 
+        'data' => $data
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 $sql = "SELECT COUNT(*) AS count FROM timetabledata WHERE username = ?";
 $sql2 = "SELECT updatetime FROM timetabledata WHERE username = ?";
 $stmt = $conn->prepare($sql);
@@ -282,7 +352,11 @@ $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
-
+if(isset($_GET['lichthi'])){
+    $client = new Client(['cookies' => true]);
+    $session_id = login($client, $username, $passwordmd5);
+    getLichthi($client, $session_id);
+}
 if ($row['count'] > 0) {
     $stmt2 = $conn->prepare($sql2);
     $stmt2->bind_param("s", $username);
@@ -293,7 +367,7 @@ if ($row['count'] > 0) {
     $updatetime = new DateTime($row2['updatetime']);
     $interval = $currentDate->diff($updatetime);
     $daysDifference = $interval->days;
-    if ($daysDifference > 3|| isset($_GET['username'])) {
+    if ($daysDifference > 1|| isset($_GET['username'])) {
         $client = new Client(['cookies' => true]);
         $session_id = login($client, $username, $passwordmd5);
         echo fetch_timetable($client, $session_id, $username, $conn, true);
